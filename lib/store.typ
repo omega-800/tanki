@@ -1,0 +1,5 @@
+#let cards = (:)
+#let decks = (:)
+#let notes = (:)
+#let templates = (:)
+#let collections = (:)
