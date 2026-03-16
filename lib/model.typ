@@ -32,14 +32,22 @@
 #let deck = (
   id: auto,
   name: auto,
-  autoplay: auto,
-  dynamic: auto,
-  // TODO: ...
+  desc: auto, // TODO: is-markdown field
+  collapsed: auto,
+  b-collapsed: auto,
+  conf: auto,
 ) => (:)
 
-// col->
-#let template = (
+// deck->
+#let deck-conf = (
+  id: auto,
+  name: auto,
+  autoplay: auto,
+  dynamic: auto,
+  timer: auto,
   // TODO: ...
+  // lapse: auto,
+  // new: auto,
 ) => (:)
 
 // col->

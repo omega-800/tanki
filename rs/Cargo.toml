@@ -1,0 +1,9 @@
+[package]
+name = "tanki-rs"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+ciborium = "0.2.2"
+serde = "1.0.228"
+wasm-minimal-protocol = "0.1.0"

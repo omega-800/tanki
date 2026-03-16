@@ -1,12 +1,19 @@
 {
-  description = "typst development environment";
+  description = "typst + rust development environment";
 
-  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    rust-overlay = {
+      url = "github:oxalica/rust-overlay";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+  };
 
   outputs =
     {
+      self,
       nixpkgs,
-      ...
+      rust-overlay,
     }:
     let
       systems = nixpkgs.lib.platforms.unix;
@@ -18,7 +25,10 @@
             import nixpkgs {
               inherit system;
               config = { };
-              overlays = [ ];
+              overlays = [
+                rust-overlay.overlays.default
+                self.overlays.default
+              ];
             }
           )
         );
@@ -31,21 +41,36 @@
         pkgs:
         let
           inherit (pkgs.lib.fileset) toSource unions;
-          tcntop = pkgs.buildTypstPackage {
+          tanki = pkgs.buildTypstPackage {
             pname = "tanki";
             version = "0.0.1";
             src = toSource {
               root = ./.;
-              fileset = unions [
+              fileset = fs.intersection (fs.gitTracked ./.) (unions [
                 ./lib
                 ./typst.toml
-              ];
+              ]);
             };
+          };
+          tanki-rs = pkgs.rustPlatform.buildRustPackage {
+            pname = "tanki-rs";
+            version = "0.0.1";
+            src = fs.toSource {
+              root = ./rs;
+              fileset = fs.intersection (fs.gitTracked ./rs) (
+                fs.unions [
+                  ./rs/Cargo.toml
+                  ./rs/Cargo.lock
+                  (fs.fileFilter (f: f.hasExt "rs") ./rs)
+                ]
+              );
+            };
+            cargoLock.lockFile = ./rs/Cargo.lock;
           };
         in
         {
-          inherit tcntop;
-          default = tcntop;
+          inherit tanki tanki-rs;
+          default = tanki;
         }
       );
 
@@ -54,9 +79,27 @@
           packages = with pkgs; [
             typst
             typstyle
+            rustToolchain
+            pkg-config
+            bacon
+            rust-analyzer
           ];
+          env = {
+            RUST_BACKTRACE = 1;
+            RUST_SRC_PATH = "${pkgs.rustToolchain}/lib/rustlib/src/rust/library";
+          };
         };
       });
+
+      overlays.default = _: prev: {
+        rustToolchain = prev.rust-bin.stable.latest.default.override {
+          extensions = [
+            "rust-src"
+            "rustfmt"
+          ];
+          targets = [ "wasm32-unknown-unknown" ];
+        };
+      };
 
       apps = eachSystem (
         pkgs:
@@ -90,7 +133,11 @@
             }
           ) names;
         in
-        pkgs.lib.listToAttrs scripts
+        (pkgs.lib.mapAttrs (_: drv: {
+          type = "app";
+          program = "${drv}${drv.passthru.exePath or "/bin/${drv.pname or drv.name}"}";
+        }) self.packages.${pkgs.system})
+        // pkgs.lib.listToAttrs scripts
         // {
           default = (builtins.elemAt scripts 0).value;
         }
