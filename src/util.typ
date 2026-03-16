@@ -7,6 +7,8 @@
       attrs: (class: "dict"),
       it.pairs().map(((k, v)) => html.elem(k, to-html(v))).join(),
     )
+  } else if type(it) == content {
+    it
   } else if it == auto {
     [auto]
   } else {

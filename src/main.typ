@@ -16,7 +16,7 @@
     )
   } else if format == auto and it.type == "tanki-note" {
     it
-  } else if format != none {
+  } else if format != none and format != auto {
     format(it)
   }
 }

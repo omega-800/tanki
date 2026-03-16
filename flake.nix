@@ -28,6 +28,20 @@
               overlays = [
                 rust-overlay.overlays.default
                 self.overlays.default
+                (final: prev: {
+                  typst-mathml = prev.typst.overrideAttrs (_: rec {
+                    src = fetchGit {
+                      url = "https://github.com/mkorje/typst";
+                      rev = "946dafb177386cc1f145241191e76e7ea9632a8c";
+                      ref = "mathml";
+                    };
+                    cargoDeps = final.rustPlatform.fetchCargoVendor {
+                      inherit src;
+                      hash = "sha256-kqEJKsIjmxuvoRNI11fte8KuZPLfsBQfPHl0Q7SZqqU=";
+                    };
+                    postPatch = "";
+                  });
+                })
               ];
             }
           )
@@ -77,7 +91,7 @@
       devShells = eachSystem (pkgs: {
         default = pkgs.mkShellNoCC {
           packages = with pkgs; [
-            typst
+            typst-mathml
             typstyle
             rustToolchain
             pkg-config
@@ -115,7 +129,7 @@
               text = ''
                 (trap 'kill 0' SIGINT; 
                   ${pkgs.zathura}/bin/zathura "$PWD/${output}" &
-                  ${pkgs.typst}/bin/typst watch ${input} --root .
+                  ${pkgs.typst-mathml}/bin/typst watch ${input} --root .
                 )
               '';
             };
