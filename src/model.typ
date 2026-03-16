@@ -26,17 +26,33 @@
   fields: auto,
   sort-field: auto,
   // checksum: auto,
-) => (:)
+  // FIXME: belongs into card
+  deck: auto
+) => (
+  type: "tanki-note",
+  id: id,
+  guid: guid,
+  fields: fields,
+  sort-field: sort-field,
+  // FIXME: belongs into card
+  deck: deck
+)
 
 // col->
 #let deck = (
   id: auto,
   name: auto,
   desc: auto, // TODO: is-markdown field
-  collapsed: auto,
-  b-collapsed: auto,
+  // collapsed: auto,
+  // b-collapsed: auto,
   conf: auto,
-) => (:)
+) => (
+  type: "tanki-deck",
+  id: id,
+  name: name,
+  desc: desc,
+  conf: conf,
+)
 
 // deck->
 #let deck-conf = (

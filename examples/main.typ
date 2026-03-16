@@ -1,9 +1,9 @@
-#{
-  let p = plugin("../rs/hello.wasm")
+#import "/src/main.typ" as tanki
 
-  assert.eq(str(p.hello()), "Hello from wasm!!!")
+#let did = 1234
+#tanki.add-deck(did, "Example", "My Deck")
+#let new-note = tanki.add-note.with(deck: did)
+#new-note(("What's nine plus ten?", "Twennyone"))
+#new-note(("bing", "bong"))
 
-  let encoded = cbor.encode((x: 1, y: 2.0))
-  let decoded = cbor(p.complex_data(encoded))
-  assert.eq(decoded, 3.0)
-}
+

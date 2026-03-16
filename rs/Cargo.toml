@@ -4,6 +4,5 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-ciborium = "0.2.2"
-serde = "1.0.228"
-wasm-minimal-protocol = "0.1.0"
+genanki-rs = "0.4.0"
+scraper = "0.25.0"

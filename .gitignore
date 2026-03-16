@@ -6,3 +6,5 @@ debug
 target
 **/*.rs.bk
 **/mutants.out*/
+
+*.apkg
