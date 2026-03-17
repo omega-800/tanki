@@ -27,21 +27,8 @@
               config = { };
               overlays = [
                 rust-overlay.overlays.default
-                self.overlays.default
-                (final: prev: {
-                  typst-mathml = prev.typst.overrideAttrs (_: rec {
-                    src = fetchGit {
-                      url = "https://github.com/mkorje/typst";
-                      rev = "946dafb177386cc1f145241191e76e7ea9632a8c";
-                      ref = "mathml";
-                    };
-                    cargoDeps = final.rustPlatform.fetchCargoVendor {
-                      inherit src;
-                      hash = "sha256-kqEJKsIjmxuvoRNI11fte8KuZPLfsBQfPHl0Q7SZqqU=";
-                    };
-                    postPatch = "";
-                  });
-                })
+                self.overlays.rust-toolchain
+                self.overlays.typst-mathml
               ];
             }
           )
@@ -51,6 +38,35 @@
       names = map (s: builtins.elemAt (builtins.match ".*/([^/]+)\\.typ$" s) 0) sources;
     in
     {
+      overlays = {
+        rust-toolchain = _: prev: {
+          rustToolchain = prev.rust-bin.stable.latest.default.override {
+            extensions = [
+              "rust-src"
+              "rustfmt"
+            ];
+            targets = [ "wasm32-unknown-unknown" ];
+          };
+        };
+        typst-mathml = final: prev: {
+          typst-mathml = prev.typst.overrideAttrs (_: rec {
+            src = fetchGit {
+              url = "https://github.com/mkorje/typst";
+              rev = "946dafb177386cc1f145241191e76e7ea9632a8c";
+              ref = "mathml";
+            };
+            cargoDeps = final.rustPlatform.fetchCargoVendor {
+              inherit src;
+              hash = "sha256-kqEJKsIjmxuvoRNI11fte8KuZPLfsBQfPHl0Q7SZqqU=";
+            };
+            postPatch = "";
+          });
+        };
+        tanki = final: prev: {
+          inherit (self.packages.${prev.system}) tanki tanki-rs;
+        };
+      };
+
       packages = eachSystem (
         pkgs:
         let
@@ -105,16 +121,6 @@
           };
         };
       });
-
-      overlays.default = _: prev: {
-        rustToolchain = prev.rust-bin.stable.latest.default.override {
-          extensions = [
-            "rust-src"
-            "rustfmt"
-          ];
-          targets = [ "wasm32-unknown-unknown" ];
-        };
-      };
 
       apps = eachSystem (
         pkgs:
