@@ -84,6 +84,7 @@
         in
         {
           inherit tanki tanki-rs;
+          inherit (pkgs) typst-mathml;
           default = tanki;
         }
       );
