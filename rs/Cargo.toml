@@ -6,3 +6,4 @@ edition = "2024"
 [dependencies]
 genanki-rs = "0.4.0"
 scraper = "0.25.0"
+tempfile = "3.27.0"

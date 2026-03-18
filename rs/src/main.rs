@@ -1,11 +1,54 @@
 use genanki_rs::{Deck, Note, basic_model};
 use scraper::{Html, Selector};
-use std::{collections::HashMap, env::args, fs};
+use std::{
+    collections::HashMap,
+    env::args,
+    fs,
+    process::Command,
+};
+use tempfile::NamedTempFile;
 
 pub fn main() {
-    let inpath = args().nth(1).expect("Usage: tanki-rs <input-html-file>");
-    let html = fs::read_to_string(inpath).expect("Couldn't read file contents");
+    let html_file = args()
+        .nth(1)
+        .expect("Usage: tanki-rs <input-file> [output-path]");
+    let output_path = args().nth(2);
+    let typst_args_from = if output_path.is_some_and(|p| !p.starts_with("-")) {
+        3
+    } else {
+        2
+    };
+    // TODO: compile using typst lib as soon as mathml is merged
+    // then the whole html parsing step can be yeeted as well
+    if html_file.ends_with(".typ") {
+        let tmpfile = NamedTempFile::new().expect("Couldn't create temp file");
+        let tmppath = tmpfile.into_temp_path();
 
+        let out_file = tmppath
+            .to_str()
+            .expect("Temp file path not valid")
+            .to_string();
+
+        let status = Command::new("typst")
+            .arg("compile")
+            .args(args().skip(typst_args_from).collect::<Vec<_>>())
+            .arg("--format=html")
+            .arg("--features=html")
+            .arg("--input=tanki=true")
+            .arg(html_file)
+            .arg(&out_file)
+            .status()
+            .expect("Failed to compile document");
+
+        assert!(status.success(), "Compilation wasn't successful");
+
+        do_the_thing(fs::read_to_string(out_file).expect("Couldn't read file contents"));
+    } else {
+        do_the_thing(fs::read_to_string(html_file).expect("Couldn't read file contents"));
+    }
+}
+
+pub fn do_the_thing(html: String) {
     let document = Html::parse_document(&html);
     let mut decks = parse_decks(&document);
     let mut notes = parse_notes(&document);
