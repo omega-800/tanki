@@ -8,35 +8,68 @@
     let templ = if template == auto { note.model.templates.first() } else {
       note.model.templates.find(t => t.name == template)
     }
-    let rg = regex(note.model.fields.map(f => "{{" + f.name + "}}").join("|"))
+    let rg = regex(
+      note.model.fields.map(f => "\\{\\{" + f.name + "\\}\\}").join("|"),
+    )
     let apply-templ = t => t
       .matches(rg)
-      .fold((), (acc, (start, end, text)) => acc)
+      .fold((t,), (acc, m) => {
+        let (parts, rem) = if acc.len() > 1 {
+          acc.chunks(acc.len() - 1)
+        } else {
+          ((), (acc.first(),))
+        }
+        let res = rem.first().split(m.text)
+        let before = res.first()
+        let after = res.at(1, default: "")
+        let fname = m
+          .text
+          .replace("{{", "", count: 1)
+          .replace("}}", "", count: 1)
+        let (field, v) = fields.find(((f, nf)) => f.name == fname)
+        (
+          ..parts,
+          before,
+          text(
+            dir: if field.rtl { rtl } else { ltr },
+            font: field.font,
+            size: field.size * 1pt,
+            v,
+          ),
+          after,
+        )
+      })
       .join()
-    // let apply-templ = t => fields
-    //   .fold(
-    //     (t,),
-    //     (acc, (k, v)) => acc
-    //       .map(n => {
-    //         n
-    //           .split("{{" + k.name + "}}")
-    //           .intersperse(text(
-    //             dir: if k.rtl { rtl } else { ltr },
-    //             font: k.font,
-    //             size: k.size * 1pt,
-    //             v,
-    //           ))
-    //       })
-    //       .join(),
-    //     // acc.replace( "{{" + k.name + "}}", v,)
-    //   )
-    //   .join()
     // TODO: FrontSide etc
     [
       #apply-templ(templ.question)
 
       #apply-templ(templ.answer)
     ]
+  }
+}
+
+#let to-html(it, class: "") = {
+  if type(it) == array {
+    html.elem(
+      "ul",
+      it.map(v => html.elem("li", attrs: (class: class), to-html(v))).join(),
+    )
+  } else if type(it) == dictionary {
+    html.elem(
+      "div",
+      attrs: (
+        class: class + " dict " + (if "type" in it { it.type } else { "" }),
+      ),
+      it.pairs().map(((k, v)) => html.elem(k, to-html(v))).join(),
+    )
+  } else if type(it) == content {
+    it
+    // TODO: check if repr works as expected
+  } else if type(it) == bool or it == auto or it == none {
+    repr(it)
+  } else {
+    str(it)
   }
 }
 
@@ -51,7 +84,10 @@
       it.type,
       attrs: (class: "tanki-elem")
         + (if "id" in it { (id: str(it.id)) } else {}),
-      it.pairs().map(((k, v)) => html.elem(k, to-html(v))).join(),
+      it
+        .pairs()
+        .map(((k, v)) => html.elem(k, to-html(v, class: it.type)))
+        .join(),
     )
   } else if format != none {
     if format != auto {
@@ -62,24 +98,5 @@
 
       ])
     }
-  }
-}
-
-#let to-html(it) = {
-  if type(it) == array {
-    html.elem("ul", it.map(v => html.elem("li", to-html(v))).join())
-  } else if type(it) == dictionary {
-    html.elem(
-      "div",
-      attrs: (class: "dict"),
-      it.pairs().map(((k, v)) => html.elem(k, to-html(v))).join(),
-    )
-  } else if type(it) == content {
-    it
-    // TODO: repr instead of str
-  } else if it == auto {
-    [auto]
-  } else {
-    str(it)
   }
 }

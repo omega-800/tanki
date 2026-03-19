@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+  <body>
+    <tanki-deck class="tanki-elem" id="123456"><type>tanki-deck</type><id>123456</id><name>Example</name><desc>My Deck</desc><filename>deck</filename></tanki-deck>
+    <h2>Default note model with custom formatting</h2>
+    <tanki-note class="tanki-elem"><type>tanki-note</type><sort-field>false</sort-field><model>auto</model><tags><ul></ul></tags><deck>123456</deck><guid>3025</guid><fields><ul><li class="tanki-note">What's nine plus ten?</li><li class="tanki-note">Twennyone</li></ul></fields></tanki-note>
+    <h2>Default note model with no formatting</h2>
+    <tanki-note class="tanki-elem"><type>tanki-note</type><sort-field>false</sort-field><model>auto</model><tags><ul></ul></tags><deck>123456</deck><guid>974</guid><fields><ul><li class="tanki-note">bing</li><li class="tanki-note">bong</li></ul></fields></tanki-note>
+    <h2>Mathemetical equations (no formatting)</h2>
+    <tanki-note class="tanki-elem"><type>tanki-note</type><sort-field>false</sort-field><model>auto</model><tags><ul></ul></tags><deck>123456</deck><guid>71009</guid><fields><ul><li class="tanki-note">MATHS</li><li class="tanki-note"><math>
+              <msubsup>
+                <mo largeop="true">∑</mo>
+                <mrow>
+                  <mi>𝑖</mi>
+                  <mo lspace="0em" rspace="0em">=</mo>
+                  <mn>1</mn>
+                </mrow>
+                <mn>69</mn>
+              </msubsup>
+              <msub>
+                <mi>𝑣</mi>
+                <mi>𝑖</mi>
+              </msub>
+              <mo lspace="0.2222222222222222em" rspace="0.2222222222222222em">⋅</mo>
+              <mrow>
+                <mo>‖</mo>
+                <mi>𝑣</mi>
+                <mo>‖</mo>
+              </mrow>
+              <mo>,</mo>
+              <mi>𝑣</mi>
+              <mo>∈</mo>
+              <msup>
+                <mi>ℝ</mi>
+                <mn>69</mn>
+              </msup>
+            </math></li></ul></fields></tanki-note>
+    <h2>Custom model/template (no formatting)</h2>
+    <tanki-note class="tanki-elem"><type>tanki-note</type><sort-field>false</sort-field><model><div class="tanki-note dict tanki-model"><type>tanki-model</type><id>401</id><name>tip</name><fields><ul><li class><div class=" dict tanki-field"><type>tanki-field</type><name>Question</name><font>Liberation Sans</font><rtl>false</rtl><sticky>false</sticky><size>20</size></div></li><li class><div class=" dict tanki-field"><type>tanki-field</type><name>Answer</name><font>Liberation Sans</font><rtl>false</rtl><sticky>false</sticky><size>20</size></div></li><li class><div class=" dict tanki-field"><type>tanki-field</type><name>Tip</name><font>Liberation Sans</font><rtl>false</rtl><sticky>false</sticky><size>20</size></div></li></ul></fields><templates><ul><li class><div class=" dict tanki-template"><type>tanki-template</type><did>auto</did><name>Tip card</name><answer>{{FrontSide}}&lt;hr id="answer">{{Answer}}</answer><question>{{Question}} ({{Tip}})</question><b-answer>{{FrontSide}}&lt;hr id="answer">{{Answer}}</b-answer><b-question>{{Question}} ({{Tip}})</b-question></div></li></ul></templates><css></css><model-type>FrontBack</model-type><latex-pre></latex-pre><latex-post></latex-post><sort-field-index>auto</sort-field-index></div></model><tags><ul></ul></tags><deck>123456</deck><guid>8886</guid><fields><ul><li class="tanki-note">What's the capital of Switzerland</li><li class="tanki-note">Bern</li><li class="tanki-note">It’s not Zurich</li></ul></fields></tanki-note>
+    <h2>Custom model/template (with formatting)</h2>
+    <tanki-note class="tanki-elem"><type>tanki-note</type><sort-field>false</sort-field><model><div class="tanki-note dict tanki-model"><type>tanki-model</type><id>401</id><name>tip</name><fields><ul><li class><div class=" dict tanki-field"><type>tanki-field</type><name>Question</name><font>Liberation Sans</font><rtl>false</rtl><sticky>false</sticky><size>20</size></div></li><li class><div class=" dict tanki-field"><type>tanki-field</type><name>Answer</name><font>Liberation Sans</font><rtl>false</rtl><sticky>false</sticky><size>20</size></div></li><li class><div class=" dict tanki-field"><type>tanki-field</type><name>Tip</name><font>Liberation Sans</font><rtl>false</rtl><sticky>false</sticky><size>20</size></div></li></ul></fields><templates><ul><li class><div class=" dict tanki-template"><type>tanki-template</type><did>auto</did><name>Tip card</name><answer>{{FrontSide}}&lt;hr id="answer">{{Answer}}</answer><question>{{Question}} ({{Tip}})</question><b-answer>{{FrontSide}}&lt;hr id="answer">{{Answer}}</b-answer><b-question>{{Question}} ({{Tip}})</b-question></div></li></ul></templates><css></css><model-type>FrontBack</model-type><latex-pre></latex-pre><latex-post></latex-post><sort-field-index>auto</sort-field-index></div></model><tags><ul></ul></tags><deck>123456</deck><guid>14597</guid><fields><ul><li class="tanki-note">moar maths</li><li class="tanki-note"><math>
+              <mi>𝑥</mi>
+              <mo>+</mo>
+              <mn>2</mn>
+              <mo>=</mo>
+              <mn>2</mn>
+            </math></li><li class="tanki-note"><math>
+              <mi>𝑥</mi>
+              <mover>
+                <mo>=</mo>
+                <mi>!</mi>
+              </mover>
+              <mn>0</mn>
+            </math></li></ul></fields></tanki-note>
+    <h2>Custom model, formatted through the provided anki template</h2>
+    <tanki-note class="tanki-elem"><type>tanki-note</type><sort-field>false</sort-field><model><div class="tanki-note dict tanki-model"><type>tanki-model</type><id>735</id><name>custom</name><fields><ul><li class><div class=" dict tanki-field"><type>tanki-field</type><name>Question</name><font>Liberation Sans</font><rtl>false</rtl><sticky>false</sticky><size>20</size></div></li><li class><div class=" dict tanki-field"><type>tanki-field</type><name>Field1</name><font>Liberation Sans</font><rtl>false</rtl><sticky>false</sticky><size>20</size></div></li><li class><div class=" dict tanki-field"><type>tanki-field</type><name>Answer</name><font>Liberation Sans</font><rtl>false</rtl><sticky>false</sticky><size>20</size></div></li><li class><div class=" dict tanki-field"><type>tanki-field</type><name>Field2</name><font>Liberation Sans</font><rtl>false</rtl><sticky>false</sticky><size>20</size></div></li></ul></fields><templates><ul><li class><div class=" dict tanki-template"><type>tanki-template</type><did>auto</did><name>Card 1</name><answer>{{Answer}} &lt;br /> {{Field2}}</answer><question>{{Question}} &lt;br /> {{Field1}}</question><b-answer>{{Answer}} &lt;br /> {{Field2}}</b-answer><b-question>{{Question}} &lt;br /> {{Field1}}</b-question></div></li></ul></templates><css></css><model-type>FrontBack</model-type><latex-pre></latex-pre><latex-post></latex-post><sort-field-index>auto</sort-field-index></div></model><tags><ul></ul></tags><deck>123456</deck><guid>2349</guid><fields><ul><li class="tanki-note">I will</li><li class="tanki-note">Never</li><li class="tanki-note">Kill</li><li class="tanki-note">Myself</li></ul></fields></tanki-note>
+  </body>
+</html>

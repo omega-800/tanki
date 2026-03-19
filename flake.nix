@@ -62,7 +62,7 @@
             postPatch = "";
           });
         };
-        tanki = final: prev: {
+        tanki = _: prev: {
           inherit (self.packages.${prev.system}) tanki tanki-rs;
         };
       };

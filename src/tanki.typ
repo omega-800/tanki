@@ -26,6 +26,12 @@
   /// Browser question template. Defaults to @template.question
   /// -> str | auto
   b-question: auto,
+
+  // TODO:
+  /// Custom format
+  /// -> function | dict
+  format: auto,
+
   ..args,
 ) = (
   type: "tanki-template",
@@ -35,6 +41,8 @@
   question: question,
   b-answer: or-default(b-answer, answer),
   b-question: or-default(b-question, question),
+
+  // format: format
 )
 
 /// Model field
@@ -110,6 +118,10 @@
   /// Index of the sort field
   /// -> int | auto
   sort-field-index: auto,
+  // TODO:
+  /// Custom format
+  /// -> function | dict
+  format: auto,
 
   ..args,
 ) = {
@@ -127,6 +139,8 @@
     latex-pre: latex-pre,
     latex-post: latex-post,
     sort-field-index: sort-field-index,
+
+    // format: format,
   )
 }
 
