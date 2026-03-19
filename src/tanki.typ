@@ -163,7 +163,7 @@
     type: "tanki-note",
     sort-field: sort-field,
     model: if model == auto { model } else { new-model(..model) },
-    tags: tags,
+    tags: tags.map(t => t.strip().replace(" ", "_")),
     deck: deck,
 
     guid: guid,
