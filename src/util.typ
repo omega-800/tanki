@@ -1,17 +1,27 @@
-#let to-html(it) = {
-  if type(it) == array {
-    html.elem("ul", it.map(v => html.elem("li", to-html(v))).join())
-  } else if type(it) == dictionary {
-    html.elem(
-      "div",
-      attrs: (class: "dict"),
-      it.pairs().map(((k, v)) => html.elem(k, to-html(v))).join(),
+#let get-pos-or-named(args, pos, name) = if args.pos().len() > pos {
+  args.pos().at(pos)
+} else {
+  args.named().at(name, default: none)
+}
+
+#let or-default(value, default) = if (
+  value == auto
+    or value == none
+    or (
+      (type(value) == array or type(value) == dictionary) and value.len() == 0
     )
-  } else if type(it) == content {
-    it
-  } else if it == auto {
-    [auto]
-  } else {
-    str(it)
-  }
+) {
+  default
+} else {
+  value
+}
+
+#let gen-id(name) = repr(name).codepoints().map(str.to-unicode).sum()
+
+#let name-and-id(args, name, id) = {
+  let name = args.pos().at(0, default: name)
+  (
+    name,
+    or-default(id, gen-id(name)),
+  )
 }
