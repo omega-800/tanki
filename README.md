@@ -53,7 +53,7 @@ tanki-rs <path-to-typst-file> [typst-args]
 # eg
 PATH="/my/path/of/typst-mathml/bin:$PATH" tanki-rs my-document.typ
 # or using nix
-nix run github:omega-800/tanki#tanki-rs my-document.typ
+nix run github:omega-800/tanki#tanki-rs -- my-document.typ
 ```
 
 #### nix
@@ -70,15 +70,17 @@ nix run github:omega-800/tanki#tanki-rs my-document.typ
   };
 
   outputs = { nixpkgs, tanki, ... }: {
-    devShells.x86_64-linux.default = let 
+    devShells.x86_64-linux.default = 
+      let 
         pkgs = import nixpkgs {
             system = "x86_64-linux";
             overlays = [ tanki.overlays.typst-mathml tanki.overlays.tanki ];
           };
-      in pkgs.mkShellNoCC {
-        packages = [ pkgs.tanki-rs ];
-        PATH = "${pkgs.typst-mathml}/bin:$PATH";
-      };
+      in 
+        pkgs.mkShellNoCC {
+          packages = [ pkgs.tanki-rs ];
+          PATH = "${pkgs.typst-mathml}/bin:$PATH";
+        };
   };
 }
 ```
