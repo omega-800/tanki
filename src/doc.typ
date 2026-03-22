@@ -83,6 +83,14 @@
   let curfields = ()
   let curnoteloc = none
 
+  let is-tanki-note-start = m => (
+    type(m) == dictionary
+      and "value" in m
+      and type(m.value) == dictionary
+      and "type" in m.value
+      and m.value.type == "tanki:note:start"
+  )
+
   for (i, elem) in body.children.enumerate() {
     let meta = elem.at("value", default: none)
     if (
@@ -103,7 +111,7 @@
           did,
           body,
           query(metadata)
-            .filter(m => m.value.type == "tanki:note:start")
+            .filter(is-tanki-note-start)
             .at(notectr, default: none),
         )
       }
@@ -120,9 +128,7 @@
         inside-note,
         did,
         body,
-        query(metadata)
-          .filter(m => m.value.type == "tanki:note:start")
-          .at(notectr, default: none),
+        query(metadata).filter(is-tanki-note-start).at(notectr, default: none),
       )
       inside-note = false
       curfields = ()
