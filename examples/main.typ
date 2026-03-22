@@ -48,6 +48,33 @@
   #note.fields.at(1)
 ]
 
+#let render-tags = note => box(stroke: blue, inset: 1em)[
+
+  #grid(
+    columns: (1fr, auto),
+    gutter: 5pt,
+    [
+      #note.fields.at(0)
+
+      #line(length: 100%, stroke: blue.lighten(50%))
+
+      #note.fields.at(1)
+    ],
+
+    [
+      #align(right, [
+        #text(fill: blue, weight: "bold")[Auto tags from\ previous headers]
+        #stack(spacing: 2pt, ..note
+          .tags
+          .rev()
+          .map(i => box(fill: blue.lighten(80%), radius: 5pt, inset: 5pt, text(
+            size: .75em,
+            i,
+          ))))])
+    ],
+  )
+]
+
 #let custom-tip-note-format = note => block(
   fill: blue.lighten(80%),
   inset: .5em,
@@ -64,11 +91,16 @@
 
 = Default note model with custom formatting
 
+
 #add-note("What's nine plus ten?", "Twennyone", format: render-default)
 
-= Default note model with no formatting
+= Default note model
 
-#add-note("bing", "bong")
+== With custom formatting
+
+=== And tags
+
+#add-note("bing", "bong", format: render-tags)
 
 = Mathemetical equations (no formatting)
 

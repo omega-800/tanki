@@ -61,10 +61,7 @@
         if curnotemeta.headings-as-tags and curnoteloc != none {
           query(selector(heading).before(curnoteloc.location()))
             .rev()
-            .fold((:), (acc, cur) => if str(cur.level) in acc { acc } else {
-              acc.insert(str(cur.level), to-string(cur).trim().replace(" ", "_"))
-              acc
-            })
+            .fold((:), prev-headings)
             .values()
         } else { () }
       ),
