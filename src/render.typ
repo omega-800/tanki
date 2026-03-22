@@ -73,7 +73,7 @@
   }
 }
 
-#let render(it, format: auto) = context {
+#let render(it, format: auto, anki-format: it => it) = context {
   if (
     "html" in std
       and target() == "html"
@@ -84,7 +84,7 @@
       it.type,
       attrs: (class: "tanki-elem")
         + (if "id" in it { (id: str(it.id)) } else {}),
-      it
+      anki-format(it)
         .pairs()
         .map(((k, v)) => html.elem(k, to-html(v, class: it.type)))
         .join(),

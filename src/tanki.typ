@@ -196,11 +196,14 @@
   )
 }
 
+// TODO: move extra args into deck()
+// NOTE: add note args for all notes in deck?
 #let add-deck(..args, format: auto) = render(
   deck(..args.pos(), ..args.named()),
   format: format,
 )
-#let add-note(..args, format: auto, headings-as-tags: true) = context {
+// TODO: move extra args into note()
+#let add-note(..args, format: auto, anki-format: auto, headings-as-tags: true) = context {
   let tags = args.named().at("tags", default: ())
   render(
     note(..args.pos(), ..args.named(), tags: if headings-as-tags {
@@ -217,6 +220,7 @@
       tags
     }),
     format: format,
+    anki-format: anki-format
   )
 }
 
