@@ -163,7 +163,9 @@
     type: "tanki-note",
     sort-field: sort-field,
     model: if model == auto { model } else { new-model(..model) },
-    tags: tags.map(t => t.trim().replace(" ", "_")),
+    tags: tags.map(t => if type(t) == str { t.trim().replace(" ", "_") } else {
+      t
+    }),
     deck: deck,
 
     guid: guid,
@@ -187,7 +189,10 @@
     name: name,
     desc: desc,
 
-    filename: filename,
+    filename: or-default(
+      or-default(filename, name.trim().replace(" ", "_")),
+      str(id),
+    ),
   )
 }
 
