@@ -8,7 +8,7 @@ This implementation is quick and dirty but it works. Maybe a cleaner implementat
 
 ### typst package
 
-This package isn't in the official repository yet. You either have to clone this repo and include it in your local typst import or in the TYPST_PACKAGE_PATH (for nix users: see flake as described below).
+This package isn't in the official repository yet. You either have to clone this repo and include it in your typst project as a local import or add it to the TYPST_PACKAGE_PATH (for nix users: see flake as described below).
 
 #### functions
 
@@ -85,7 +85,7 @@ nix run github:omega-800/tanki#tanki-rs -- my-document.typ
           };
         in
         pkgs.mkShellNoCC {
-          packages = [ pkgs.tanki-rs ];
+          packages = [ pkgs.tanki-rs pkgs.typst-mathml ];
           PATH = "${pkgs.typst-mathml}/bin:$PATH";
 
           TYPST_PACKAGE_PATH = "${pkgs.lib.escapeShellArg (
