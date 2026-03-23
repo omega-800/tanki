@@ -8,6 +8,8 @@ This implementation is quick and dirty but it works. Maybe a cleaner implementat
 
 ### typst package
 
+This package isn't in the official repository yet. You either have to clone this repo and include it in your local typst import or in the TYPST_PACKAGE_PATH (for nix users: see flake as described below).
+
 #### functions
 
 ```typst
@@ -69,18 +71,29 @@ nix run github:omega-800/tanki#tanki-rs -- my-document.typ
     };
   };
 
-  outputs = { nixpkgs, tanki, ... }: {
-    devShells.x86_64-linux.default = 
-      let 
-        pkgs = import nixpkgs {
+  outputs =
+    { nixpkgs, tanki, ... }:
+    {
+      devShells.x86_64-linux.default =
+        let
+          pkgs = import nixpkgs {
             system = "x86_64-linux";
-            overlays = [ tanki.overlays.typst-mathml tanki.overlays.tanki ];
+            overlays = [
+              tanki.overlays.typst-mathml
+              tanki.overlays.tanki
+            ];
           };
-      in 
+        in
         pkgs.mkShellNoCC {
           packages = [ pkgs.tanki-rs ];
           PATH = "${pkgs.typst-mathml}/bin:$PATH";
+
+          TYPST_PACKAGE_PATH = "${pkgs.lib.escapeShellArg (
+            pkgs.linkFarm "unpublished-typst-packages" {
+              "local/tanki/0.0.1" = tanki;
+            }
+          )}";
         };
-  };
+    };
 }
 ```
