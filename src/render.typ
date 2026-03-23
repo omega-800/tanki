@@ -73,7 +73,8 @@
   }
 }
 
-#let render(it, format: auto, anki-format: it => it) = context {
+#let render(it, format: auto, anki-format: auto) = context {
+  let anki-format = or-default(anki-format, it => it)
   if (
     "html" in std
       and target() == "html"
