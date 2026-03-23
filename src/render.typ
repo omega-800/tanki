@@ -1,3 +1,5 @@
+#import "./util.typ": *
+
 #let template-note(note, template: auto) = {
   if note.model == auto {
     note.fields.join([
