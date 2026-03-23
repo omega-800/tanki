@@ -40,6 +40,9 @@
     to-string(it.body)
   } else if it == [ ] {
     " "
+  } else {
+    // TODO: handle more cases
+    repr(it)
   }
 }
 
