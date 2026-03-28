@@ -1,5 +1,19 @@
 #import "./util.typ": *
 
+#let escape-regex = r => (
+  "*",
+  "+",
+  "?",
+  "|",
+  "{",
+  ",",
+  "(",
+  ")",
+  "^",
+  "$",
+  ".",
+).fold(r, (acc, cur) => acc.replace(cur, "\\" + cur))
+
 #let template-note(note, template: auto) = {
   if note.model == auto {
     note.fields.join([
@@ -11,11 +25,15 @@
       note.model.templates.find(t => t.name == template)
     }
     let rg = regex(
-      note.model.fields.map(f => "\\{\\{" + f.name + "\\}\\}").join("|"),
+      note
+        .model
+        .fields
+        .map(f => "\\{\\{" + escape-regex(f.name) + "\\}\\}")
+        .join("|"),
     )
-    let apply-templ = t => t
+    let apply-templ = t => to-string(t)
       .matches(rg)
-      .fold((t,), (acc, m) => {
+      .fold((to-string(t),), (acc, m) => {
         let (parts, rem) = if acc.len() > 1 {
           acc.chunks(acc.len() - 1)
         } else {
@@ -34,8 +52,8 @@
           before,
           text(
             dir: if field.rtl { rtl } else { ltr },
-            font: field.font,
-            size: field.size * 1pt,
+            // font: field.font,
+            // size: field.size * 1pt,
             v,
           ),
           after,
