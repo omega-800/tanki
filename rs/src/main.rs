@@ -59,8 +59,10 @@ pub fn do_the_thing(html: String, output_path: &Path) {
     let mut notes = parse_notes(&document);
 
     for (id, (filename, deck)) in decks.iter_mut() {
+        let Some(deck_notes) = notes.remove(id) else {
+            continue;
+        };
         println!("Adding deck \"{}\"", filename);
-        let deck_notes = notes.remove(id).unwrap();
         let cnt = deck_notes.len();
         for note in deck_notes {
             deck.add_note(note);

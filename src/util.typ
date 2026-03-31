@@ -25,3 +25,32 @@
     or-default(id, gen-id(name)),
   )
 }
+
+// TODO: use this in places where needed
+#let to-string(it) = {
+  if type(it) == str {
+    it
+  } else if type(it) != content {
+    str(it)
+  } else if it.has("text") {
+    it.text
+  } else if it.has("children") {
+    it.children.map(to-string).join()
+  } else if it.has("body") {
+    to-string(it.body)
+  } else if it == [ ] {
+    " "
+  } else if repr(it) == "linebreak()" {
+    "\n"
+  } else if repr(it) == "parbreak()" {
+    "\n\n"
+  } else {
+    // TODO: handle more cases
+    repr(it)
+  }
+}
+
+#let prev-headings(acc, cur) = if str(cur.level) in acc { acc } else {
+  acc.insert(str(cur.level), to-string(cur).trim().replace(" ", "_"))
+  acc
+}

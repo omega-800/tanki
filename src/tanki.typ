@@ -184,7 +184,9 @@
     type: "tanki-note",
     sort-field: sort-field,
     model: if model == auto { model } else { new-model(..model) },
-    tags: tags.map(t => t.trim().replace(" ", "_")),
+    tags: tags.map(t => if type(t) == str { t.trim().replace(" ", "_") } else {
+      t
+    }),
     deck: deck,
 
     guid: guid,
@@ -223,10 +225,15 @@
     name: name,
     desc: desc,
 
-    filename: filename,
+    filename: or-default(
+      or-default(filename, name.trim().replace(" ", "_")),
+      str(id),
+    ),
   )
 }
 
+// TODO: move extra args into deck()
+// NOTE: add note args for all notes in deck?
 /// Provides deck to the document, thus enabling anki card generation
 ///
 /// ```example-??
@@ -244,6 +251,7 @@
   format: format,
 )
 
+// TODO: move extra args into note()
 /// Provides note to the document, thus enabling anki card generation
 ///
 /// ```example-??
@@ -252,14 +260,31 @@
 #let add-note(
   /// Same args as in @note
   /// -> args
-  ..args,
+  ..args, 
   /// Formatting function that gets applied to deck during non-anki rendering
   /// -> function
-  format: auto,
-) = render(
-  note(..args.pos(), ..args.named()),
-  format: format,
-)
+  format: auto, 
+  anki-format: auto, 
+  headings-as-tags: true) = context {
+  let tags = args.named().at("tags", default: ())
+  render(
+    note(..args.pos(), ..args.named(), tags: if headings-as-tags {
+      (
+        ..tags,
+        ..(
+          query(selector(heading).before(here()))
+            .rev()
+            .fold((:), prev-headings)
+            .values()
+        ),
+      )
+    } else {
+      tags
+    }),
+    format: format,
+    anki-format: anki-format
+  )
+}
 
 #let new-deck = deck
 

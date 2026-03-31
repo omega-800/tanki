@@ -1,3 +1,19 @@
+#import "./util.typ": *
+
+#let escape-regex = r => (
+  "*",
+  "+",
+  "?",
+  "|",
+  "{",
+  ",",
+  "(",
+  ")",
+  "^",
+  "$",
+  ".",
+).fold(r, (acc, cur) => acc.replace(cur, "\\" + cur))
+
 /// Templates a note with the configured Anki template of the note's model
 ///
 /// ```example-??
@@ -22,11 +38,15 @@
       note.model.templates.find(t => t.name == template)
     }
     let rg = regex(
-      note.model.fields.map(f => "\\{\\{" + f.name + "\\}\\}").join("|"),
+      note
+        .model
+        .fields
+        .map(f => "\\{\\{" + escape-regex(f.name) + "\\}\\}")
+        .join("|"),
     )
-    let apply-templ = t => t
+    let apply-templ = t => to-string(t)
       .matches(rg)
-      .fold((t,), (acc, m) => {
+      .fold((to-string(t),), (acc, m) => {
         let (parts, rem) = if acc.len() > 1 {
           acc.chunks(acc.len() - 1)
         } else {
@@ -45,8 +65,8 @@
           before,
           text(
             dir: if field.rtl { rtl } else { ltr },
-            font: field.font,
-            size: field.size * 1pt,
+            // font: field.font,
+            // size: field.size * 1pt,
             v,
           ),
           after,
@@ -86,7 +106,8 @@
   }
 }
 
-#let render(it, format: auto) = context {
+#let render(it, format: auto, anki-format: auto) = context {
+  let anki-format = or-default(anki-format, it => it)
   if (
     "html" in std
       and target() == "html"
@@ -97,7 +118,7 @@
       it.type,
       attrs: (class: "tanki-elem")
         + (if "id" in it { (id: str(it.id)) } else {}),
-      it
+      anki-format(it)
         .pairs()
         .map(((k, v)) => html.elem(k, to-html(v, class: it.type)))
         .join(),
