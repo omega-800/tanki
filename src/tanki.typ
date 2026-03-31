@@ -92,6 +92,8 @@
 /// -> model
 #let model(
   /// Model id
+  ///
+  /// If set to auto, id gets generated from @model.name. Either @model.id or @model.name have to be set.
   /// -> number | auto
   id: auto,
   /// Model name
@@ -146,12 +148,31 @@
 
 #let new-model = model
 
+/// Note
+///
+/// ```example-??
+/// ```
+/// -> note
 #let note(
+  /// Note id
+  /// -> number | auto
   guid: auto,
+  /// Fields
+  ///
+  /// Has to have the same count as the fields defined in the model
+  /// -> (str)
   fields: (),
+  /// If sort field is enabled
+  /// -> bool
   sort-field: false,
+  /// Note's Model
+  /// -> model | auto
   model: auto,
+  /// Tags
+  /// -> (str)
   tags: (),
+  /// Deck id
+  /// -> number | auto
   deck: auto,
 
   ..args,
@@ -171,10 +192,25 @@
   )
 }
 
+/// Deck
+///
+/// ```example-??
+/// ```
+/// -> note
 #let deck(
+  /// Deck id
+  ///
+  /// If set to auto, id gets generated from @deck.name. Either @deck.id or @deck.name have to be set.
+  /// -> number | auto
   id: auto,
+  /// Name
+  /// -> str | auto
   name: auto,
+  /// Filename (without extension)
+  /// -> str | auto
   filename: auto,
+  /// Description
+  /// -> str
   desc: "",
 
   ..args,
@@ -191,17 +227,43 @@
   )
 }
 
-#let add-deck(..args, format: auto) = render(
+/// Provides deck to the document, thus enabling anki card generation
+///
+/// ```example-??
+/// ```
+/// -> content
+#let add-deck(
+  /// Same args as in @deck
+  /// -> args
+  ..args,
+  /// Formatting function that gets applied to deck during non-anki rendering
+  /// -> function
+  format: auto,
+) = render(
   deck(..args.pos(), ..args.named()),
   format: format,
 )
-#let add-note(..args, format: auto) = render(
+
+/// Provides note to the document, thus enabling anki card generation
+///
+/// ```example-??
+/// ```
+/// -> content
+#let add-note(
+  /// Same args as in @note
+  /// -> args
+  ..args,
+  /// Formatting function that gets applied to deck during non-anki rendering
+  /// -> function
+  format: auto,
+) = render(
   note(..args.pos(), ..args.named()),
   format: format,
 )
 
 #let new-deck = deck
 
+/// TODO:
 #let deck-with-models(
   deck,
   ..models,

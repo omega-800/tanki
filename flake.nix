@@ -34,8 +34,12 @@
           )
         );
       fs = nixpkgs.lib.fileset;
-      sources = map toString (fs.toList (fs.fileFilter (f: f.hasExt "typ") ./examples));
-      names = map (s: builtins.elemAt (builtins.match ".*/([^/]+)\\.typ$" s) 0) sources;
+      names = map (n: builtins.match ".*/([^/]+)/([^/]+)\\.typ$" (toString n)) (
+        builtins.concatMap (d: fs.toList (fs.fileFilter (f: f.hasExt "typ") d)) [
+          ./examples
+          ./docs
+        ]
+      );
     in
     {
       overlays = {
@@ -77,7 +81,7 @@
             src = toSource {
               root = ./.;
               fileset = fs.intersection (fs.gitTracked ./.) (unions [
-                ./lib
+                ./src
                 ./typst.toml
               ]);
             };
@@ -126,10 +130,12 @@
         pkgs:
         let
           watch-open =
-            name:
+            path:
             let
-              input = "examples/${name}.typ";
-              output = "examples/${name}.pdf";
+              name = builtins.elemAt path 1;
+              dir = builtins.elemAt path 0;
+              input = "${dir}/${name}.typ";
+              output = "${dir}/${name}.pdf";
             in
             pkgs.writeShellApplication {
               name = "typst-watch-open-${name}";
@@ -141,9 +147,10 @@
               '';
             };
           scripts = map (
-            name:
+            path:
             let
-              p = watch-open name;
+              name = builtins.elemAt path 1;
+              p = watch-open path;
             in
             {
               inherit name;

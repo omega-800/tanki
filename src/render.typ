@@ -1,4 +1,17 @@
-#let template-note(note, template: auto) = {
+/// Templates a note with the configured Anki template of the note's model
+///
+/// ```example-??
+/// template-note(my-note)
+/// ```
+/// -> content
+#let template-note(
+  /// Note to template
+  /// -> note
+  note, 
+  /// Model's template name to apply. Defaults to first template
+  /// -> str | auto
+  template: auto
+) = {
   if note.model == auto {
     note.fields.join([
 
