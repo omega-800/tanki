@@ -91,17 +91,37 @@
       and m.value.type == "tanki:note:start"
   )
 
-  for (i, elem) in body.children.enumerate() {
-    let meta = elem.at("value", default: none)
-    if (
-      meta == none
-        or type(meta) != dictionary
-        or meta.type.match(regex("tanki:.*")) == none
-    ) { continue }
+  // FIXME: shiroa
+  if "children" in body {
+    for (i, elem) in body.children.enumerate() {
+      let meta = elem.at("value", default: none)
+      if (
+        meta == none
+          or type(meta) != dictionary
+          or meta.type.match(regex("tanki:.*")) == none
+      ) { continue }
 
-    if meta.type == "tanki:note:start" {
-      // querying is so goddamn cursed and i love it
-      if inside-note {
+      if meta.type == "tanki:note:start" {
+        // querying is so goddamn cursed and i love it
+        if inside-note {
+          context add-n(
+            i,
+            elem,
+            curfields,
+            curnotemeta,
+            inside-note,
+            did,
+            body,
+            query(metadata)
+              .filter(is-tanki-note-start)
+              .at(notectr, default: none),
+          )
+        }
+        inside-note = true
+        curfields = if meta.add-first-field { ((i,),) } else { () }
+        curnotemeta = meta
+        notectr += 1
+      } else if meta.type == "tanki:note:end" {
         context add-n(
           i,
           elem,
@@ -114,38 +134,23 @@
             .filter(is-tanki-note-start)
             .at(notectr, default: none),
         )
-      }
-      inside-note = true
-      curfields = if meta.add-first-field { ((i,),) } else { () }
-      curnotemeta = meta
-      notectr += 1
-    } else if meta.type == "tanki:note:end" {
-      context add-n(
-        i,
-        elem,
-        curfields,
-        curnotemeta,
-        inside-note,
-        did,
-        body,
-        query(metadata).filter(is-tanki-note-start).at(notectr, default: none),
-      )
-      inside-note = false
-      curfields = ()
-      curnotemeta = none
-    } else if meta.type == "tanki:field:start" {
-      // if not inside-note {
-      //   inside-note = true
-      //   curnotemeta = meta
-      // } else {
-      let lastfield = curfields.last(default: none)
-      if lastfield != none and lastfield.len() == 1 {
+        inside-note = false
+        curfields = ()
+        curnotemeta = none
+      } else if meta.type == "tanki:field:start" {
+        // if not inside-note {
+        //   inside-note = true
+        //   curnotemeta = meta
+        // } else {
+        let lastfield = curfields.last(default: none)
+        if lastfield != none and lastfield.len() == 1 {
+          curfields.last().push(i)
+        }
+        // }
+        curfields.push((i,))
+      } else if meta.type == "tanki:field:end" {
         curfields.last().push(i)
       }
-      // }
-      curfields.push((i,))
-    } else if meta.type == "tanki:field:end" {
-      curfields.last().push(i)
     }
   }
 }

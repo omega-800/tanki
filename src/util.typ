@@ -40,6 +40,8 @@
     to-string(it.body)
   } else if it == [ ] {
     " "
+  // TODO: if elem.func() == math.equation { }
+  // but for other elems
   } else if repr(it) == "linebreak()" {
     "\n"
   } else if repr(it) == "parbreak()" {
