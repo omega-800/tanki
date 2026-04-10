@@ -92,7 +92,7 @@
   )
 
   // FIXME: shiroa
-  if "children" in body {
+  if body.has("children") {
     for (i, elem) in body.children.enumerate() {
       let meta = elem.at("value", default: none)
       if (
